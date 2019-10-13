@@ -1,0 +1,48 @@
+Berke Nuri
+
+Overview:
+This program reads in a ".mach" or an ".asm" file as a command line argument. It converts the binary encodings into MIPS instructions for the.mach file or just reads the instructions. Instructions are read by a dependency checker and later on are simulated on an ideal pipeline, a stalling pipeline, and a data forwarding pipeline. The RAW Dependencies are printed and the stallings are calculated depending on the dependences. The total completion time is calculated at the end of each pipeline. 
+
+This program consists of the following classes: OpcodeTable, RegisterTable, Instructions, DependencyChecker, MachLangParser, ASMParser, Pipeline, (StallPipeline and DataForwardPipeline are child classes of Pipeline) and one driver file called Pipesim.cpp
+
+Description of Classes/Files:
+OpcodeTable: This class stores information about the format and field informations(function and opcode) of the instructions. It only contains information of the MIPS instructions that exist in the enum class in the OpcodeTable header file. It provides specific info about the order of the registers too. 
+
+Added methods to OpcodeTable: 
+bool isIMMLabel(Opcode o);  
+bool isMemoryType(Opcode o);
+These are used to calculate the value of the immediate label or memory type fields. 
+
+RegisterTable: This class stores information about the 32 valid register names. The names are constructed corresponding to their register numbers.
+
+Instruction: This class stores information about the instructions' field values. It also includes methods that construct or change values of the instructions. Registers, the opcode, immediate fields, binary encodings and the decodings are stored here. 
+
+Added methods to Instruction:
+bool getIMMLabel();
+bool getMemoryType();
+These are used to access the immediate label or memory type fields of an instruction.  
+
+MachLangParser: This class is used to access the public fields and method of the classes above to be able to decode the binary encodings. It reads the input file and checks if it is 32 bits long and accepts the MIPS instructions which are identified in the OpcodeTable. It has a list(vector) of instructions that got translated from the lines of the input file. This file decodes the binary encodings into an instruction, then assembles the bitfields into the proper format of the instruction corresponding to the types of the instruction.
+
+ASMParser: This class reads in the MIPS instructions. It reads the input file and checks if all of the instructions are valid and are included in out OpcodeTable class. If yes, it stores the instructions and their corresponding fields. 
+
+DependencyChecker: This class keeps track of series of MIPS instructions and determines RAW, WAR or WAW dependencies that occur between the instructions due to register usage.  Instructions numbers are used to keep track of which instructions have a dependence imbetween.
+
+Added methods to DependencyChecker:
+int getRAWInstNumber(int instNumber);
+If the parameter instruction has RAW dependence, returns previous instruction number. Used to calculate stalls imbetween RAW dependent instructions. 
+void printRAWDependences();
+Prints only the RAW dependences. Used in the Pipeline constructors.
+
+Pipeline: This class is used to simulate a pipeline for series of MIPS instructions. It fuses MachLangParser and ASMParser in its constructor to read two types of files: .asm and .mach. Later on, it uses the DependencyChecker class to determine the RAW dependencies in those series of instructions. It simulates an ideal pipeline and calculates its total completion time.
+
+StallPipeline: This class is a child class of Pipeline. It uses the same constructor but overrides its execute and print methods. It uses the identified RAW dependences and control instructions to stall. Calculates completion times with respect to the stalls.
+
+DataForwardPipeline: This class is a child class of Pipeline as well. It uses the same constructor but overrides its execute and print methods. It uses the identified control instructions and memory type instruction to stall. Calculates completion times with respect to the stalls.  
+
+Pipesim: This driver file is the executable which links all of these classes and get run.
+
+Organization:
+The Pipesim.cpp class passes the name of the input file supplied by the command line arguments to the Pipeline class. Pipeline class, in its constructor, decides on if it should read it via the MachLangParser or ASMParser class depending on the file type. MachLangParser or ASMParser class checks if each line is synthatically correct. Later on in the Pipeline constructor, each line of instructions are added to an instance of the DependencyChecker. The DependencyChecker identifies the data dependences and prints all of the RAW Dependences. Each instruction gets added to the Pipeline vector. Instructions do not stall in the execution of the ideal pipeline. They stall if they have RAW dependencies or a control instructions beforehand in the execution of the StallPipeline. They stall if they have control or a load instruction before in the DataForwardPipeline. They all print the individual completion times and the total completion times of the instructions in the end.   
+
+

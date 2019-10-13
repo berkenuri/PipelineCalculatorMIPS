@@ -1,0 +1,60 @@
+RAW Dependence between instruction 1 add $3, $4, $8 and 4 sub $8, $3, $27
+IDEAL:
+Instr#   Completion Times        Mnemonic
+0       5                       |j 0x40000
+1       6                       |add $3, $4, $8
+2       7                       |addi $1, $2, 100
+3       8                       |addi $1, $2, 65436
+4       9                       |sub $8, $3, $27
+5       10                      |mult   $2, $3
+6       11                      |mfhi $15
+7       12                      |srl $15, $20, 18
+8       13                      |sra $28, $10, 7
+9       14                      |slti $1, $2, 64513
+10      15                      |slti $1, $2, 1023
+11      16                      |lw $1, 100($23)
+12      17                      |lw $1, 65436($4)
+13      18                      |beq $2, $20, 0x64
+14      19                      |beq $2, $20, 0xff9c
+Total time is 19
+
+RAW Dependence between instruction 1 add $3, $4, $8 and 4 sub $8, $3, $27
+STALL:
+Instr#   Completion Times        Mnemonic
+0       5                       |j 0x40000
+1       7                       |add $3, $4, $8
+2       8                       |addi $1, $2, 100
+3       9                       |addi $1, $2, 65436
+4       10                      |sub $8, $3, $27
+5       11                      |mult   $2, $3
+6       12                      |mfhi $15
+7       13                      |srl $15, $20, 18
+8       14                      |sra $28, $10, 7
+9       15                      |slti $1, $2, 64513
+10      16                      |slti $1, $2, 1023
+11      17                      |lw $1, 100($23)
+12      18                      |lw $1, 65436($4)
+13      19                      |beq $2, $20, 0x64
+14      21                      |beq $2, $20, 0xff9c
+Total time is 21
+
+RAW Dependence between instruction 1 add $3, $4, $8 and 4 sub $8, $3, $27
+FORWARDING:
+Instr#   Completion Times        Mnemonic
+0       5                       |j 0x40000
+1       7                       |add $3, $4, $8
+2       8                       |addi $1, $2, 100
+3       9                       |addi $1, $2, 65436
+4       10                      |sub $8, $3, $27
+5       11                      |mult   $2, $3
+6       12                      |mfhi $15
+7       13                      |srl $15, $20, 18
+8       14                      |sra $28, $10, 7
+9       15                      |slti $1, $2, 64513
+10      16                      |slti $1, $2, 1023
+11      17                      |lw $1, 100($23)
+12      19                      |lw $1, 65436($4)
+13      21                      |beq $2, $20, 0x64
+14      23                      |beq $2, $20, 0xff9c
+Total time is 23
+
